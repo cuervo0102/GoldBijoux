@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CartController;
 
 
 Route::get('/user', function (Request $request) {
@@ -33,4 +34,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::put('/categories/{category}', [CategoryController::class, 'update']);
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
+});
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::put('/cart/{cart}', [CartController::class, 'update']);
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy']);
+    Route::delete('/cart-clear', [CartController::class, 'clear']);
 });
