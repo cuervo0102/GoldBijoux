@@ -26,7 +26,6 @@ class Product extends Model
         'requires_ring_size' => 'boolean',
     ];
 
-    // Relations
     public function category()
     {
         return $this->belongsTo(Category::class);

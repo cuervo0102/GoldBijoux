@@ -10,7 +10,7 @@ class CartController extends Controller
 {
     public function index(Request $request)
     {
-        $cartItems = Cart::with(['product.category', 'ringSize'])
+        $cartItems = Cart::with(['product.category'])
             ->where('user_id', $request->user()->id)
             ->get();
 
@@ -33,10 +33,10 @@ class CartController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
-            'ring_size_id' => 'nullable|exists:ring_sizes,id',
         ]);
 
         $product = Product::findOrFail($request->product_id);
+        
         if ($product->stock < $request->quantity) {
             return response()->json([
                 'success' => false,
@@ -44,18 +44,10 @@ class CartController extends Controller
             ], 400);
         }
 
-        if ($product->requires_ring_size && !$request->ring_size_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Veuillez sélectionner une taille de bague'
-            ], 400);
-        }
-
         $cartItem = Cart::updateOrCreate(
             [
                 'user_id' => $request->user()->id,
                 'product_id' => $request->product_id,
-                'ring_size_id' => $request->ring_size_id,
             ],
             [
                 'quantity' => \DB::raw('quantity + ' . $request->quantity)
@@ -65,7 +57,7 @@ class CartController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Produit ajouté au panier',
-            'data' => $cartItem->load(['product', 'ringSize'])
+            'data' => $cartItem->load(['product'])
         ], 201);
     }
 
@@ -94,7 +86,7 @@ class CartController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Panier mis à jour',
-            'data' => $cart->load(['product', 'ringSize'])
+            'data' => $cart->load(['product'])
         ], 200);
     }
 
