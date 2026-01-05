@@ -34,7 +34,6 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
-    // Helper methods
     public function isAdmin()
     {
         return $this->role === 'admin';
@@ -44,4 +43,9 @@ class User extends Authenticatable
     {
         return $this->role === 'client';
     }
+
+    public function favorites()
+{
+    return $this->belongsToMany(Product::class, 'favorites');
+}
 }
